@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Identity;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use App\Utilities\HttpResponse;
 
 class AuthController extends Controller
 {
@@ -28,32 +30,43 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-
     public function login(Request $request)
     {
-        $validator = Validator::make($request->json()->all(), [
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
+        try {
+            $validator = Validator::make($request->json()->all(), [
+                'email' => 'required|string|email',
+                'password' => 'required|string',
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => 'Invalid credentials'], 401);
+            if ($validator->fails()) {
+                throw new \Exception('Su nombre de usuario o clave de acceso son incorrectos o su cuenta de usuario no existe.', 401);
+            }
+
+            $credentials = [
+                'email' => $request->json('email'),
+                'password' => $request->json('password'),
+            ];
+
+            if (! $token = auth()->attempt($credentials)) {
+                throw new \Exception('Su nombre de usuario o clave de acceso son incorrectos o su cuenta de usuario no existe.', 401);
+            }
+
+            $user = auth()->user();
+            // Obtener información de identity si existe
+            $identity = Identity::where('uuid', $user->uuid)->first();
+
+            return $this->respondWithToken($token, $user,  $identity);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => HttpResponse::clientError()['status'],
+                'code' => HttpResponse::clientError()['code'],
+                'message' => $e->getMessage(),
+                'token' => null,
+                'identity' => null,
+            ], $e->getCode());
         }
-
-        $credentials = [
-            'email' => $request->json('email'),
-            'password' => $request->json('password'),
-        ];
-
-        if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-        $user = auth()->user();
-        // Obtener información de identity si existe
-        $identity = Identity::where('uuid', $user->uuid)->first();
-
-        return $this->respondWithToken($token, $user,  $identity);
     }
+
 
     /**
      * Get the authenticated User.
@@ -74,7 +87,7 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Sesión cerrada exitosamente']);
     }
 
     /**
@@ -97,8 +110,8 @@ class AuthController extends Controller
     protected function respondWithToken($token, $user,  $identity)
     {
         return response()->json([
-            'status' => true,
-            'code'=> 200,
+            'status' => HttpResponse::success()['status'],
+            'code' =>   HttpResponse::success()['code'],
             "message" =>"Usuario autenticado exitosamente.",
             'token' => $token,
             'identity' => $identity,
@@ -110,89 +123,67 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $validator = Validator::make($request->json()->all(), [
-            'name' => 'required',
-            'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
+        try {
+            $validator = Validator::make($request->json()->all(), [
+                'name' => 'required',
+                'email' => 'required|string|email|max:100|unique:users',
+                'password' => 'required|string|min:6',
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
-        }
+            if ($validator->fails()) {
+                throw new \Exception($validator->errors()->toJson(), 400);
+            }
 
-        // Generar UUID para el usuario e identidad
-        $uuid = Str::uuid()->toString();
+            // Utilizamos una transacción para asegurar que se cree tanto el usuario como la identidad
+            DB::beginTransaction();
 
-        $user = User::create(array_merge(
-            $validator->validate(),
-            [
-                'password' => bcrypt($request->json('password')),
+            $uuid = Str::uuid()->toString();
+
+            $user = User::create(array_merge(
+                $validator->validate(),
+                [
+                    'password' => bcrypt($request->json('password')),
+                    'uuid' => $uuid,
+                ]
+            ));
+
+            $currentTimestamp = time();
+
+            $identity = new Identity([
+                'iss' => 'http://test.gosice.com',
+                'sub' => 'Authentication',
+                'aud' => 'http://186.70.111.82',
+                'typ' => 'json',
                 'uuid' => $uuid,
-            ]
-        ));
+                'name' => 'PRUEBA',
+                'surname' => 'DESARROLLO',
+                'email' => $request->json('email'),
+                'avatar' => 'http://test.gosice.com/resources/images/avatar.png',
+                'iat' => $currentTimestamp,
+                'exp' => $currentTimestamp + 3600,
+            ]);
 
-        // Definir $currentTimestamp solo si la validación es exitosa
-        $currentTimestamp = time();
+            $identity->save();
 
-        $identity = new Identity([
-            'iss' => 'http://test.gosice.com',
-            'sub' => 'Authentication',
-            'aud' => 'http://186.70.111.82',
-            'typ' => 'json',
-            'uuid' => $uuid,
-            'name' => 'PRUEBA',
-            'surname' => 'DESARROLLO',
-            'email' => $request->json('email'),  // Utilizando el correo electrónico del usuario
-            'avatar' => 'http://test.gosice.com/resources/images/avatar.png',
-            'iat' => $currentTimestamp,
-            'exp' => $currentTimestamp + 3600,  // Agregar 1 hora al timestamp actual (3600 segundos)
-        ]);
+            // Confirmamos la transacción si no hay excepciones
+            DB::commit();
 
-        $identity->save();
+            return response()->json([
+                'message' => 'Usuario creado exitosamente',
+                'user' => $user,
+                'identity' => $identity,
+            ], 201);
+        } catch (\Exception $e) {
+            // En caso de excepción, revertimos la transacción y manejamos el error
+            DB::rollBack();
 
-        return response()->json([
-            'message' => 'User created successfully',
-            'user' => $user,
-            'identity' => $identity,
-        ], 201);
+            return response()->json([
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ], $e->getCode());
+        }
     }
 
-//     public function register(Request $request)
-// {
-//     $validator = Validator::make($request->json()->all(), [
-//         'name' => 'required',
-//         'email' => 'required|string|email|max:100|unique:users',
-//         'password' => 'required|string|min:6',
-//     ]);
-
-//     if ($validator->fails()) {
-//         return response()->json($validator->errors()->toJson(), 400);
-//     }
-
-//     $user = User::create(array_merge(
-//         $validator->validate(),
-//         ['password' => bcrypt($request->json('password'))]
-//     ));
-
-//     $identity = new Identity([
-//         'iss' => 'http://test.gosice.com',
-//         'sub' => 'Authentication',
-//         'aud' => 'http://186.70.111.82',
-//         'typ' => 'json',
-//         'uuid' => '6bf10012-4890-42f0-b8ed-cd6f5f0f082e',
-//         'name' => 'PRUEBA',
-//         'surname' => 'DESARROLLO',
-//         'email' => 'prueba@gotrade.com.ec',
-//         'avatar' => 'http://test.gosice.com/resources/images/avatar.png',
-//         'iat' => 1705982747,
-//         'exp' => 1706587547,
-//     ]);
-
-//     return response()->json([
-//         'message' => 'User created successfully',
-//         'user' => $user,
-//     ], 201);
-// }
 
 
 }
