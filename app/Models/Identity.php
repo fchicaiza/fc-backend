@@ -29,4 +29,5 @@ class Identity extends Model
         'iat',
         'exp',
     ];
+    protected $hidden = ['id', 'created_at', 'updated_at'];
 }

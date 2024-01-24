@@ -49,8 +49,10 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         $user = auth()->user();
+        // Obtener información de identity si existe
+        $identity = Identity::where('uuid', $user->uuid)->first();
 
-        return $this->respondWithToken($token, $user);
+        return $this->respondWithToken($token, $user,  $identity);
     }
 
     /**
@@ -92,13 +94,17 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithToken($token, $user)
+    protected function respondWithToken($token, $user,  $identity)
     {
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'user_info' => $user
+            'status' => true,
+            'code'=> 200,
+            "message" =>"Usuario autenticado exitosamente.",
+            'token' => $token,
+            'identity' => $identity,
+            // 'token_type' => 'bearer',
+            // 'expires_in' => auth()->factory()->getTTL() * 60,
+            // 'user_info' => $user,
         ]);
     }
 
