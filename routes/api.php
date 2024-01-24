@@ -21,14 +21,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group([
 
     'middleware' => 'api',
-    'prefix' => 'auth'
+    'prefix' => 'v1'
 
 ], function ($router) {
 
-    Route::post('login', 'AuthController@login');
-    Route::post('logout', 'AuthController@logout');
-    Route::post('refresh', 'AuthController@refresh');
-    Route::post('profile', 'AuthController@profile');
-    Route::post('register', 'AuthController@register');
+    Route::post('login', 'App\Http\Controllers\AuthController@login');
+    Route::post('logout', 'App\Http\Controllers\AuthController@logout');
+    Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
+    Route::post('profile', 'App\Http\Controllers\AuthController@profile');
+    Route::post('register', 'App\Http\Controllers\AuthController@register');
 
 });
