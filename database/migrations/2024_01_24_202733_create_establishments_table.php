@@ -11,28 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-    Schema::create('establecimientos', function (Blueprint $table) {
-                $table->id();
-                $table->string('nombre');
-                $table->string('direccion_manzana')->nullable();
-                $table->string('direccion_calle_principal');
-                $table->string('direccion_numero');
-                $table->string('direccion_transversal');
-                $table->string('direccion_referencia');
-                $table->string('administrador');
-                $table->string('telefonos_contacto');
-                $table->string('email_contacto');
-                $table->string('ubicacion');
-                $table->uuid('id_provincia');
-                $table->uuid('id_ciudad');
-                $table->uuid('id_zona');
-                $table->uuid('id_canal');
-                $table->uuid('id_subcanal');
-                $table->uuid('id_cadena');
-                $table->boolean('en_ruta');
-                $table->uuid('cliente_proyecto_id');
-                $table->timestamps();
-            });
+        Schema::create('establishments', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('nombre');
+            $table->string('direccion_manzana')->nullable();
+            $table->string('direccion_calle_principal');
+            $table->string('direccion_numero');
+            $table->string('direccion_transversal');
+            $table->string('direccion_referencia');
+            $table->string('administrador');
+            $table->string('telefonos_contacto');
+            $table->string('email_contacto');
+            $table->string('ubicacion');
+            $table->uuid('id_provincia');
+            $table->uuid('id_ciudad');
+            $table->uuid('id_zona');
+            $table->uuid('id_canal');
+            $table->uuid('id_subcanal');
+            $table->uuid('id_cadena');
+            $table->boolean('en_ruta');
+            $table->uuid('cliente_proyecto_id');
+            $table->timestamps();
+        });
     }
 
     /**
