@@ -42,6 +42,15 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::put('editar-provincia/{province}', 'App\Http\Controllers\ProvinceController@update');
         Route::delete('eliminar-provincia/{province}', 'App\Http\Controllers\ProvinceController@destroy');
     });
+    //City Section
+    Route::prefix('ciudades')->group(function(){
+        Route::post('agregar-ciudad', 'App\Http\Controllers\CityController@store');
+        Route::get('mostrar-detalle-ciudad/{ciudad}', 'App\Http\Controllers\CityController@show');
+        Route::get('mostrar-ciudad/{ciudad}/edit', 'App\Http\Controllers\CityController@edit');
+        Route::get('todas-ciudades', 'App\Http\Controllers\CityController@index');
+        Route::put('editar-ciudad/{ciudad}', 'App\Http\Controllers\CityController@update');
+        Route::delete('eliminar-ciudad/{ciudad}', 'App\Http\Controllers\CityController@destroy');
+    });
 
 });
 
