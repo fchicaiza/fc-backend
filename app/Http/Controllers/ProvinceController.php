@@ -53,31 +53,56 @@ class ProvinceController extends Controller
         }
     }
 
-  public function show(Province $province)
+  public function show($provincia)
     {
         try {
+            $province = Province::findOrFail($provincia);
             return response()->json($province);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['status'=> false, 'error' => 'Provincia no encontrada'], 404);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
+            // Verify if got an known exeption code state
+            $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
+
+            // Verify if code state is equal 0
+            if ($statusCode == 0) {
+                return response()->json(['status' => false, 'error' => 'Provincia no encontrada'], 404);
+            }
+            // Handle if other code state exists
+            if(stripos($e->getMessage(), 'No query results for model') !== false){
+                return response()->json(['status'=>false ,'error' => 'Provincia no encontrada', "message"=>"No se ha encontrado ningún resultado con el codigo ingresado"], $statusCode );
+            }else{
+                return response()->json(['error' => $e->getMessage()], $statusCode );
+            }
+
         }
     }
 
-    public function edit(Province $province)
+    public function edit($provincia)
     {
         try {
+            $province = Province::findOrFail($provincia);
             return response()->json($province);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['status'=> false, 'error' => 'Provincia no encontrada'], 404);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
+            // Verify if got an known exeption code state
+            $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
+
+            // Verify if code state is equal 0
+            if ($statusCode == 0) {
+                return response()->json(['status' => false, 'error' => 'Provincia no encontrada'], 404);
+            }
+            // Handle if other code state exists
+            if(stripos($e->getMessage(), 'No query results for model') !== false){
+                return response()->json(['status'=>false ,'error' => 'Provincia no encontrada', "message"=>"No se ha encontrado ningún resultado con el codigo ingresado"], $statusCode );
+            }else{
+                return response()->json(['error' => $e->getMessage()], $statusCode );
+            }
+
         }
     }
 
-    public function update(Request $request, Province $province)
+    public function update(Request $request, $provincia)
     {
         try {
+            $province = Province::findOrFail($provincia);
             // Validate the request
             $request->validate([
                 'code' => 'required',
@@ -88,20 +113,43 @@ class ProvinceController extends Controller
 
             return response()->json(['status'=> true, 'success' => 'Province actualizada exitosamente', 'province' => $province]);
         } catch (\Exception $e) {
-            // Capture exceptions
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
+            // Verify if got an known exeption code state
+            $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
+
+            // Verify if code state is equal 0
+            if ($statusCode == 0) {
+                return response()->json(['status' => false, 'error' => 'Provincia no encontrada'], 404);
+            }
+            // Handle if other code state exists
+            if(stripos($e->getMessage(), 'No query results for model') !== false){
+                return response()->json(['status'=>false ,'error' => 'Provincia no encontrada', "message"=>"No se ha encontrado ningún resultado con el codigo ingresado"], $statusCode );
+            }else{
+                return response()->json(['error' => $e->getMessage()], $statusCode );
+            }
         }
     }
 
-    public function destroy(Province $province)
+    public function destroy($provincia)
     {
         try {
+            $province = Province::findOrFail($provincia);
             $province->delete();
 
             return response()->json(['status'=> true, 'success' => 'Province eliminada exitosamente']);
         } catch (\Exception $e) {
-            // Capture exceptions
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
+            // Verify if got an known exeption code state
+            $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
+
+            // Verify if code state is equal 0
+            if ($statusCode == 0) {
+                return response()->json(['status' => false, 'error' => 'Provincia no encontrada'], 404);
+            }
+            // Handle if other code state exists
+            if(stripos($e->getMessage(), 'No query results for model') !== false){
+                return response()->json(['status'=>false ,'error' => 'Provincia no encontrada', "message"=>"No se ha encontrado ningún resultado con el codigo ingresado"], $statusCode );
+            }else{
+                return response()->json(['error' => $e->getMessage()], $statusCode );
+            }
         }
     }
 }

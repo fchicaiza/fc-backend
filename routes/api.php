@@ -36,11 +36,11 @@ Route::middleware('api')->prefix('v1')->group(function () {
     // Province Section
     Route::prefix('provincias')->group(function(){
         Route::post('agregar-provincia', 'App\Http\Controllers\ProvinceController@store');
-        Route::get('mostrar-detalle-provincia/{province}', 'App\Http\Controllers\ProvinceController@show');
-        Route::get('mostrar-provincia/{province}/edit', 'App\Http\Controllers\ProvinceController@edit');
+        Route::get('mostrar-detalle-provincia/{provincia}', 'App\Http\Controllers\ProvinceController@show');
+        Route::get('mostrar-provincia/{provincia}/edit', 'App\Http\Controllers\ProvinceController@edit');
         Route::get('todas-provincias', 'App\Http\Controllers\ProvinceController@index');
-        Route::put('editar-provincia/{province}', 'App\Http\Controllers\ProvinceController@update');
-        Route::delete('eliminar-provincia/{province}', 'App\Http\Controllers\ProvinceController@destroy');
+        Route::put('editar-provincia/{provincia}', 'App\Http\Controllers\ProvinceController@update');
+        Route::delete('eliminar-provincia/{provincia}', 'App\Http\Controllers\ProvinceController@destroy');
     });
     //City Section
     Route::prefix('ciudades')->group(function(){
