@@ -48,8 +48,20 @@ class CityController extends Controller
             // Capture database exceptions
             return response()->json(['status'=> false, 'error' => 'Se ha producido un error al crear la provincia.', 'details' => $e->getMessage()], 500);
         } catch (\Exception $e) {
-            // Capture other exceptions
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
+            // Verify if got an known exeption code state
+            $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
+
+            // Verify if code state is equal 0
+            if ($statusCode == 0) {
+                return response()->json(['status' => false, 'error' => 'Ciudad no encontrada'], 404);
+            }
+            // Handle if other code state exists
+            if(stripos($e->getMessage(), 'No query results for model') !== false){
+                return response()->json(['status'=>false ,'error' => 'Ciudad no encontrada', "message"=>"No se ha encontrado ningún resultado con el id proporcionado"], $statusCode );
+            }else{
+                return response()->json(['error' => $e->getMessage()], $statusCode );
+            }
+
         }
 
     }
@@ -70,7 +82,7 @@ class CityController extends Controller
             }
             // Handle if other code state exists
             if(stripos($e->getMessage(), 'No query results for model') !== false){
-                return response()->json(['status'=>false ,'error' => 'Ciudad no encontrada', "message"=>"No se ha encontrado ningún resultado con el codigo ingresado"], $statusCode );
+                return response()->json(['status'=>false ,'error' => 'Ciudad no encontrada', "message"=>"No se ha encontrado ningún resultado con el id proporcionado"], $statusCode );
             }else{
                 return response()->json(['error' => $e->getMessage()], $statusCode );
             }
@@ -115,7 +127,7 @@ class CityController extends Controller
              }
              // Handle if other code state exists
              if(stripos($e->getMessage(), 'No query results for model') !== false){
-                 return response()->json(['status'=>false ,'error' => 'Ciudad no encontrada', "message"=>"No se ha encontrado ningún resultado con el codigo ingresado"], $statusCode );
+                 return response()->json(['status'=>false ,'error' => 'Ciudad no encontrada', "message"=>"No se ha encontrado ningún resultado con el id proporcionado"], $statusCode );
              }else{
                  return response()->json(['error' => $e->getMessage()], $statusCode );
              }
@@ -140,7 +152,7 @@ class CityController extends Controller
             }
             // Handle if other code state exists
             if(stripos($e->getMessage(), 'No query results for model') !== false){
-                return response()->json(['status'=>false ,'error' => 'Ciudad no encontrada', "message"=>"No se ha encontrado ningún resultado con el codigo ingresado"], $statusCode );
+                return response()->json(['status'=>false ,'error' => 'Ciudad no encontrada', "message"=>"No se ha encontrado ningún resultado con el id proporcionado"], $statusCode );
             }else{
                 return response()->json(['error' => $e->getMessage()], $statusCode );
             }

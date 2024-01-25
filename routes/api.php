@@ -51,6 +51,14 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::put('editar-ciudad/{ciudad}', 'App\Http\Controllers\CityController@update');
         Route::delete('eliminar-ciudad/{ciudad}', 'App\Http\Controllers\CityController@destroy');
     });
+    //Zone Section
+    Route::prefix('zonas')->group(function(){
+        Route::post('agregar-zona', 'App\Http\Controllers\ZoneController@store');
+        Route::get('mostrar-detalle-zona/{zona}', 'App\Http\Controllers\ZoneController@show');
+        Route::get('todas-zonas', 'App\Http\Controllers\ZoneController@index');
+        Route::put('editar-zona/{zona}', 'App\Http\Controllers\ZoneController@update');
+        Route::delete('eliminar-zona/{zona}', 'App\Http\Controllers\ZoneController@destroy');
+    });
 
 });
 
