@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\City;
+use App\Models\Subcanal;
 
-class CityController extends Controller
+class SubcanalController extends Controller
 {
     public function __construct()
     {
@@ -15,8 +15,8 @@ class CityController extends Controller
 
     public function index()
     {
-        $cities = City::all();
-        return response()->json($cities);
+        $subcanals = Subcanal::all();
+        return response()->json($subcanals);
     }
 
     public function store(Request $request)
@@ -31,34 +31,34 @@ class CityController extends Controller
             $request->validate([
                 'code' => 'required',
                 'name' => 'required',
-                'province_id' => 'required|exists:provinces,id',
+                'canal_id' => 'required|exists:canals,id',
             ]);
 
-            // Check if the city already exists
-            $existingCity = City::where('code', $request->input('code'))->first();
+            // Check if the subcanal already exists
+            $existingSubcanal = Subcanal::where('code', $request->input('code'))->first();
 
-            if ($existingCity) {
-                return response()->json(['status'=> false, 'error' => 'La Ciudad con el codigo ingresado ya existe.'], 422);
+            if ($existingSubcanal) {
+                return response()->json(['status'=> false, 'error' => 'El Subcanal con el codigo ingresado ya existe.'], 422);
             }
 
-            // Create the city
-            $city = City::create($request->all());
+            // Create the subcanal
+            $subcanal = Subcanal::create($request->all());
 
-            return response()->json(['status'=> true, 'success' => 'Ciudad creada exitosamente', 'province' => $city], 201);
+            return response()->json(['status'=> true, 'success' => 'Subcanal creado exitosamente', 'subcanal' => $subcanal], 201);
         } catch (QueryException $e) {
             // Capture database exceptions
-            return response()->json(['status'=> false, 'error' => 'Se ha producido un error al crear la provincia.', 'details' => $e->getMessage()], 500);
+            return response()->json(['status'=> false, 'error' => 'Se ha producido un error al crear el subcanal.', 'details' => $e->getMessage()], 500);
         } catch (\Exception $e) {
             // Verify if got an known exeption code state
             $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
 
             // Verify if code state is equal 0
             if ($statusCode == 0) {
-                return response()->json(['status' => false, 'error' => 'Ciudad no encontrada'], 404);
+                return response()->json(['status' => false, 'error' => 'Subcanal no encontrado'], 404);
             }
             // Handle if other code state exists
             if(stripos($e->getMessage(), 'No query results for model') !== false){
-                return response()->json(['status'=>false ,'error' => 'Ciudad no encontrada', "message"=>"No se ha encontrado ningún resultado con el id proporcionado"], $statusCode );
+                return response()->json(['status'=>false ,'error' => 'Subcanal no encontrado', "message"=>"No se ha encontrado ningún resultado con el id proporcionado"], $statusCode );
             }else{
                 return response()->json(['error' => $e->getMessage()], $statusCode );
             }
@@ -67,23 +67,22 @@ class CityController extends Controller
 
     }
 
-
-    public function show($ciudad)
+    public function show($subcanale)
     {
         try {
-            $city = City::findOrFail($ciudad);
-            return response()->json($city);
+            $subcanal = Subcanal::findOrFail($subcanale);
+            return response()->json($subcanal);
         } catch (\Exception $e) {
             // Verify if got an known exeption code state
             $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
 
             // Verify if code state is equal 0
             if ($statusCode == 0) {
-                return response()->json(['status' => false, 'error' => 'Ciudad no encontrada'], 404);
+                return response()->json(['status' => false, 'error' => 'Subcanal no encontrado'], 404);
             }
             // Handle if other code state exists
             if(stripos($e->getMessage(), 'No query results for model') !== false){
-                return response()->json(['status'=>false ,'error' => 'Ciudad no encontrada', "message"=>"No se ha encontrado ningún resultado con el id proporcionado"], $statusCode );
+                return response()->json(['status'=>false ,'error' => 'Subcanal no encontrado', "message"=>"No se ha encontrado ningún resultado con el id proporcionado"], $statusCode );
             }else{
                 return response()->json(['error' => $e->getMessage()], $statusCode );
             }
@@ -91,44 +90,31 @@ class CityController extends Controller
         }
     }
 
-    public function edit($ciudad)
+    public function update(Request $request, $subcanale)
     {
         try {
-            $city = City::findOrFail($ciudad);
-            return response()->json($city);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['status' => false, 'error' => 'Provincia no encontrada'], 404);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
-        }
-    }
-
-
-    public function update(Request $request, $ciudad)
-    {
-        try {
-            $city = City::findOrFail($ciudad);
+            $subcanal = Subcanal::findOrFail($subcanale);
 
             $request->validate([
                 'code' => 'required',
                 'name' => 'required',
-                'province_id' => 'required|exists:provinces,id',
+                // 'canal_id' => 'required|exists:canals,id',
             ]);
 
-            $city->update($request->all());
+            $subcanal->update($request->all());
 
-             return response()->json(['status' => true, 'success' => 'Ciudad actualizada exitosamente', 'city' => $city]);
+             return response()->json(['status' => true, 'success' => 'Subcanal actualizado exitosamente', 'subcanal' => $subcanal]);
          } catch (\Exception $e) {
              // Verify if got an known exeption code state
              $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
 
              // Verify if code state is equal 0
              if ($statusCode == 0) {
-                 return response()->json(['status' => false, 'error' => 'Ciudad no encontrada'], 404);
+                 return response()->json(['status' => false, 'error' => 'Subcanal no encontrado'], 404);
              }
              // Handle if other code state exists
              if(stripos($e->getMessage(), 'No query results for model') !== false){
-                 return response()->json(['status'=>false ,'error' => 'Ciudad no encontrada', "message"=>"No se ha encontrado ningún resultado con el id proporcionado"], $statusCode );
+                 return response()->json(['status'=>false ,'error' => 'Subcanal no encontrado', "message"=>"No se ha encontrado ningún resultado con el id proporcionado"], $statusCode );
              }else{
                  return response()->json(['error' => $e->getMessage()], $statusCode );
              }
@@ -136,30 +122,28 @@ class CityController extends Controller
          }
     }
 
-    public function destroy($ciudad)
+    public function destroy($subcanale)
     {
         try {
-            $city = City::findOrFail($ciudad);
-            $city->delete();
+            $subcanal = Subcanal::findOrFail($subcanale);
+            $subcanal->delete();
 
-            return response()->json(['status' => true, 'success' => 'Ciudad eliminada exitosamente']);
+            return response()->json(['status' => true, 'success' => 'Subcanal eliminado exitosamente']);
         } catch (\Exception $e) {
             // Verify if got an known exeption code state
             $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
 
             // Verify if code state is equal 0
             if ($statusCode == 0) {
-                return response()->json(['status' => false, 'error' => 'Ciudad no encontrada'], 404);
+                return response()->json(['status' => false, 'error' => 'Subcanal no encontrado'], 404);
             }
             // Handle if other code state exists
             if(stripos($e->getMessage(), 'No query results for model') !== false){
-                return response()->json(['status'=>false ,'error' => 'Ciudad no encontrada', "message"=>"No se ha encontrado ningún resultado con el id proporcionado"], $statusCode );
+                return response()->json(['status'=>false ,'error' => 'Subcanal no encontrado', "message"=>"No se ha encontrado ningún resultado con el id proporcionado"], $statusCode );
             }else{
                 return response()->json(['error' => $e->getMessage()], $statusCode );
             }
 
         }
     }
-
-
 }

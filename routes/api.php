@@ -59,6 +59,23 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::put('editar-zona/{zona}', 'App\Http\Controllers\ZoneController@update');
         Route::delete('eliminar-zona/{zona}', 'App\Http\Controllers\ZoneController@destroy');
     });
+    //Canal Section
+    Route::prefix('canales')->group(function(){
+        Route::post('agregar-canal', 'App\Http\Controllers\CanalController@store');
+        Route::get('mostrar-detalle-canal/{canal}', 'App\Http\Controllers\CanalController@show');
+        Route::get('todos-canales', 'App\Http\Controllers\CanalController@index');
+        Route::put('editar-canal/{canal}', 'App\Http\Controllers\CanalController@update');
+        Route::delete('eliminar-canal/{canal}', 'App\Http\Controllers\CanalController@destroy');
+    });
+
+    //Subcanal Section
+    Route::prefix('subcanales')->group(function(){
+        Route::post('agregar-subcanal', 'App\Http\Controllers\SubcanalController@store');
+        Route::get('mostrar-detalle-subcanal/{subcanal}', 'App\Http\Controllers\SubcanalController@show');
+        Route::get('todos-subcanales', 'App\Http\Controllers\SubcanalController@index');
+        Route::put('editar-subcanal/{subcanal}', 'App\Http\Controllers\SubcanalController@update');
+        Route::delete('eliminar-subcanal/{subcanal}', 'App\Http\Controllers\SubcanalController@destroy');
+    });
 
 });
 

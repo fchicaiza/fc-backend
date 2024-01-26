@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('zones', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->integer('code');
+            $table->string('code');
             $table->string('name');
             $table->uuid('city_id');
             $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
