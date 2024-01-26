@@ -13,24 +13,24 @@ return new class extends Migration
     {
         Schema::create('establishments', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nombre');
-            $table->string('direccion_manzana')->nullable();
-            $table->string('direccion_calle_principal');
-            $table->string('direccion_numero');
-            $table->string('direccion_transversal');
-            $table->string('direccion_referencia');
-            $table->string('administrador');
-            $table->string('telefonos_contacto');
-            $table->string('email_contacto');
-            $table->string('ubicacion');
-            $table->uuid('id_provincia');
-            $table->uuid('id_ciudad');
-            $table->uuid('id_zona');
-            $table->uuid('id_canal');
-            $table->uuid('id_subcanal');
-            $table->uuid('id_cadena');
-            $table->boolean('en_ruta');
-            $table->uuid('cliente_proyecto_id');
+            $table->string('name');
+            $table->string('block_address')->nullable();
+            $table->string('main_street_address');
+            $table->string('address_number');
+            $table->string('cross_address');
+            $table->string('reference_address');
+            $table->string('administrator');
+            $table->string('contact_phones');
+            $table->string('contact_email');
+            $table->string('location');
+            $table->uuid('province_id');
+            $table->uuid('city_id');
+            $table->uuid('zone_id');
+            $table->uuid('channel_id');
+            $table->uuid('id_subchannel');
+            $table->uuid('chain_id');
+            $table->boolean('in_rute');
+            $table->uuid('client_project_id');
             $table->timestamps();
         });
     }

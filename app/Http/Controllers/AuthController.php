@@ -126,6 +126,7 @@ class AuthController extends Controller
         try {
             $validator = Validator::make($request->json()->all(), [
                 'name' => 'required',
+                'surname'=>'required',
                 'email' => 'required|string|email|max:100|unique:users',
                 'password' => 'required|string|min:6',
             ]);
@@ -155,8 +156,8 @@ class AuthController extends Controller
                 'aud' => 'http://186.70.111.82',
                 'typ' => 'json',
                 'uuid' => $uuid,
-                'name' => 'PRUEBA',
-                'surname' => 'DESARROLLO',
+                'name' => $request->json('name'),
+                'surname' => $request->json('surname'),
                 'email' => $request->json('email'),
                 'avatar' => 'http://test.gosice.com/resources/images/avatar.png',
                 'iat' => $currentTimestamp,
