@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Canal;
+use App\Models\Chanel;
 
-class CanalController extends Controller
+class ChanelController extends Controller
 {
     public function __construct()
     {
@@ -15,8 +15,8 @@ class CanalController extends Controller
 
     public function index()
     {
-        $canals = Canal::all();
-        return response()->json($canals);
+        $chanels = Chanel::all();
+        return response()->json($chanels);
     }
 
     public function store(Request $request)
@@ -34,16 +34,16 @@ class CanalController extends Controller
             ]);
 
             // Check if the canal already exists
-            $existingCanal = Canal::where('id', $request->input('id'))->first();
+            $existingChanel = Chanel::where('id', $request->input('id'))->first();
 
-            if ($existingCanal) {
+            if ($existingChanel) {
                 return response()->json(['status'=> false, 'error' => 'El canal con el id proporcionado ya existe.'], 422);
             }
 
             // Create the canal
-            $canal = Canal::create($request->all());
+            $chanel = Chanel::create($request->all());
 
-                  return response()->json(['status'=> true, 'success' => 'Canal creado exitosamente', 'canal' => $canal], 201);
+                  return response()->json(['status'=> true, 'success' => 'Canal creado exitosamente', 'canal' => $chanel], 201);
               } catch (QueryException $e) {
                   // Capture database exceptions
                   return response()->json(['status'=> false, 'error' => 'Se ha producido un error al crear el canal.', 'details' => $e->getMessage()], 500);
@@ -65,11 +65,11 @@ class CanalController extends Controller
               }
     }
 
-    public function show($canale)
+    public function show($canal)
     {
         try {
-            $canal = Canal::findOrFail($canale);
-            return response()->json($canal);
+            $chanel = Chanel::findOrFail($canal);
+            return response()->json($chanel);
         } catch (\Exception $e) {
             // Verify if got an known exeption code state
             $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
@@ -88,19 +88,19 @@ class CanalController extends Controller
         }
     }
 
-    public function update(Request $request, $canale)
+    public function update(Request $request, $canal)
     {
         try {
-            $canal = Canal::findOrFail($canale);
+            $chanel = Canal::findOrFail($canal);
             // Validate the request
             $request->validate([
                 'code' => 'required',
                 'name' => 'required',
             ]);
 
-            $canal->update($request->all());
+            $chanel->update($request->all());
 
-            return response()->json(['status'=> true, 'success' => 'Canal actualizado exitosamente', 'canal' => $canal]);
+            return response()->json(['status'=> true, 'success' => 'Canal actualizado exitosamente', 'canal' => $chanel]);
         } catch (\Exception $e) {
             // Verify if got an known exeption code state
             $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
@@ -117,14 +117,13 @@ class CanalController extends Controller
             }
         }
 
-
     }
 
-    public function destroy($canale)
+    public function destroy($canal)
     {
         try {
-            $canal = Canal::findOrFail($canale);
-            $canal->delete();
+            $chanel = Canal::findOrFail($canal);
+            $chanel->delete();
 
             return response()->json(['status'=> true, 'success' => 'Canal eliminado exitosamente']);
         } catch (\Exception $e) {

@@ -28,9 +28,9 @@ class Establishment extends Model
     'city_id',
     'zone_id',
     'channel_id',
-    'id_subchannel',
+    'subchannel_id',
     'chain_id',
-    'en route',
+    'in_route',
     'client_project_id',
 ];
 
@@ -42,4 +42,40 @@ class Establishment extends Model
             $model->id = Str::uuid()->toString();
         });
     }
+
+    public function province()
+    {
+        return $this->belongsTo(Province::class);
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+
+    public function zone()
+    {
+        return $this->belongsTo(Zone::class);
+    }
+
+
+    public function chanel()
+    {
+        return $this->belongsTo(Chanel::class, 'channel_id');
+    }
+
+    public function subchanel()
+    {
+    return $this->belongsTo(Subchanel::class, 'subchannel_id');
+    }
+
+    public function chain()
+    {
+        return $this->belongsTo(Chain::class);
+    }
+
+    // public function identity()
+    // {
+    //     return $this->belongsTo(Identity::class, 'identity_id');
+    // }
 }

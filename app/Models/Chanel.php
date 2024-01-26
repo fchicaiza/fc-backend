@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class Canal extends Model
+class Chanel extends Model
 {
+    use HasFactory;
     public $incrementing = false;
 
     protected $keyType = 'string';
@@ -23,8 +24,13 @@ class Canal extends Model
         });
     }
 
-    public function subcanals()
+    public function subchanels()
     {
-        return $this->hasMany(Subcanal::class);
+        return $this->hasMany(Subchanel::class);
+    }
+
+    public function establishments()
+    {
+        return $this->hasMany(Establishment::class);
     }
 }

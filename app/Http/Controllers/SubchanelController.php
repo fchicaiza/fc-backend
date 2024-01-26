@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Subcanal;
+use App\Models\Subchanel;
 
-class SubcanalController extends Controller
+class SubchanelController extends Controller
 {
     public function __construct()
     {
@@ -15,8 +15,8 @@ class SubcanalController extends Controller
 
     public function index()
     {
-        $subcanals = Subcanal::all();
-        return response()->json($subcanals);
+        $subchanel = Subchanel::all();
+        return response()->json($subchanel);
     }
 
     public function store(Request $request)
@@ -31,20 +31,20 @@ class SubcanalController extends Controller
             $request->validate([
                 'code' => 'required',
                 'name' => 'required',
-                'canal_id' => 'required|exists:canals,id',
+                'chanel_id' => 'required|exists:chanels,id',
             ]);
 
             // Check if the subcanal already exists
-            $existingSubcanal = Subcanal::where('code', $request->input('code'))->first();
+            $existingSubchanel = Subchanel::where('code', $request->input('code'))->first();
 
-            if ($existingSubcanal) {
+            if ($existingSubchanel) {
                 return response()->json(['status'=> false, 'error' => 'El Subcanal con el codigo ingresado ya existe.'], 422);
             }
 
             // Create the subcanal
-            $subcanal = Subcanal::create($request->all());
+            $subchanel = Subchanel::create($request->all());
 
-            return response()->json(['status'=> true, 'success' => 'Subcanal creado exitosamente', 'subcanal' => $subcanal], 201);
+            return response()->json(['status'=> true, 'success' => 'Subcanal creado exitosamente', 'subcanal' => $subchanel], 201);
         } catch (QueryException $e) {
             // Capture database exceptions
             return response()->json(['status'=> false, 'error' => 'Se ha producido un error al crear el subcanal.', 'details' => $e->getMessage()], 500);
@@ -67,11 +67,11 @@ class SubcanalController extends Controller
 
     }
 
-    public function show($subcanale)
+    public function show($subcanal)
     {
         try {
-            $subcanal = Subcanal::findOrFail($subcanale);
-            return response()->json($subcanal);
+            $subchanel = Subchanel::findOrFail($subcanal);
+            return response()->json($subchanel);
         } catch (\Exception $e) {
             // Verify if got an known exeption code state
             $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
@@ -90,10 +90,10 @@ class SubcanalController extends Controller
         }
     }
 
-    public function update(Request $request, $subcanale)
+    public function update(Request $request, $subcanal)
     {
         try {
-            $subcanal = Subcanal::findOrFail($subcanale);
+            $subchanel = Subchanel::findOrFail($subcanal);
 
             $request->validate([
                 'code' => 'required',
@@ -101,9 +101,9 @@ class SubcanalController extends Controller
                 // 'canal_id' => 'required|exists:canals,id',
             ]);
 
-            $subcanal->update($request->all());
+            $subchanel->update($request->all());
 
-             return response()->json(['status' => true, 'success' => 'Subcanal actualizado exitosamente', 'subcanal' => $subcanal]);
+             return response()->json(['status' => true, 'success' => 'Subcanal actualizado exitosamente', 'subcanal' => $subchanel]);
          } catch (\Exception $e) {
              // Verify if got an known exeption code state
              $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
@@ -122,11 +122,11 @@ class SubcanalController extends Controller
          }
     }
 
-    public function destroy($subcanale)
+    public function destroy($subcanal)
     {
         try {
-            $subcanal = Subcanal::findOrFail($subcanale);
-            $subcanal->delete();
+            $subchanel = Subcanal::findOrFail($subcanal);
+            $subchanel->delete();
 
             return response()->json(['status' => true, 'success' => 'Subcanal eliminado exitosamente']);
         } catch (\Exception $e) {
@@ -146,4 +146,6 @@ class SubcanalController extends Controller
 
         }
     }
+
+
 }

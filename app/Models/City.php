@@ -32,4 +32,9 @@ class City extends Model
     {
         return $this->hasMany(Zone::class);
     }
+
+    public function establishments()
+    {
+        return $this->hasMany(Establishment::class);
+    }
 }

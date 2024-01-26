@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subcanals', function (Blueprint $table) {
+        Schema::create('chanels', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('code');
-            $table->uuid('canal_id');
-            $table->foreign('canal_id')->references('id')->on('canals')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subcanals');
+        Schema::dropIfExists('chanels');
     }
 };

@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class Subcanal extends Model
+class Subchanel extends Model
 {
+    use HasFactory;
     public $incrementing = false;
 
     protected $keyType = 'string';
 
-    protected $fillable = ['name', 'code', 'canal_id'];
+    protected $fillable = ['name', 'code', 'chanel_id'];
 
     protected static function boot()
     {
@@ -25,7 +26,11 @@ class Subcanal extends Model
 
     public function canal()
     {
-        return $this->belongsTo(Canal::class);
+        return $this->belongsTo(Chanel::class);
     }
 
+    public function establishments()
+    {
+        return $this->hasMany(Establishment::class);
+    }
 }

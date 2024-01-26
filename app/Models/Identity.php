@@ -30,4 +30,9 @@ class Identity extends Model
         'exp',
     ];
     protected $hidden = ['id', 'created_at', 'updated_at'];
+
+    public function establishments()
+    {
+        return $this->hasMany(Establishment::class);
+    }
 }

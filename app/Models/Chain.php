@@ -22,4 +22,9 @@ class Chain extends Model
             $model->id = Str::uuid()->toString();
         });
     }
+
+    public function establishments()
+    {
+        return $this->hasMany(Establishment::class);
+    }
 }
