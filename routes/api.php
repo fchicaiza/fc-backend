@@ -77,6 +77,14 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::delete('eliminar-subcanal/{subcanal}', 'App\Http\Controllers\SubcanalController@destroy');
     });
 
+    //Chain Section
+    Route::prefix('cadenas')->group(function(){
+        Route::post('agregar-cadena', 'App\Http\Controllers\ChainController@store');
+        Route::get('mostrar-detalle-cadena/{cadena}', 'App\Http\Controllers\ChainController@show');
+        Route::get('todas-cadenas', 'App\Http\Controllers\ChainController@index');
+        Route::put('editar-cadena/{cadena}', 'App\Http\Controllers\ChainController@update');
+        Route::delete('eliminar-cadena/{cadena}', 'App\Http\Controllers\ChainController@destroy');
+    });
 });
 
 
